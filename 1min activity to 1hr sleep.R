@@ -1,57 +1,81 @@
-##1minのactivity dataを1hrのsleepに変換してグラフ出力
+##1minのactivity dataをsleepに変換（sleepが1、awakeが0）
+##arrayデータを入れる
+##グラフ出力は別にする？
 
-##3日分のactivity dataをimport
-test <- matrix(scan("test.csv", sep=","), ncol=32, byrow=T)
+##activityを睡眠に変換
+act2sleep <- function(x) {
+  sleep <- array(0, dim=c(1440*3-4, 32, length(x[1,1,])))
 
-#5minのbinを3日分設定 aは5分ごとのsleep（0 or 1）
-a <- matrix(0, ncol=32, nrow=length(test[,1])/5)
+  for(j in 1:length(x[1,1,])){
 
-##5分ずつ切り取り、行列bとする
-##5分間のactivityのtotalをcとする
-##totalが0であればaに1を入れる
-##ここは5分で区切っているが、要修正
-for(i in 1:(length(test[,1])/5)) {
-  b <- test[((i-1)*5+1):(i*5), ]
-  c <- apply(b,2,sum)
-  for(j in 1:32){
-    if(c[j] == 0){
-      a[i,j] <- 1
+    for(i in 1:(1440*3-4)){
+      a <- x[i:(i+4),,j]
+      b <- apply(a,2,sum)
+
+      for(h in 1:32){
+        sleep[i,h,j] <- sleep[i,h,j] + (b[h] == 0) ##TRUEなら1足す
+      }
     }
   }
+  dimnames(sleep) <- dimnames(x)
+  return(sleep)
 }
+
+
 
 ##1時間の睡眠時間dを設定
-d <- matrix(0,ncol=32, nrow=length(test[,1])/60)
+##act2sleepの結果を入れる
+hrsleep <- function(x){
+  hr <- array(0, dim=c(72, 32, length(x[1,1,])))
 
-for(i in 1:(length(a[,1])/12)) {
-  e <- a[((i-1)*12+1):(i*12), ]
-  d[i,] <- apply(e,2,sum)
+  for(j in 1:length(x[1,1,])){
+
+    for(i in 1:71) {
+       a <- x[(i*60-59):(i*60),,j]
+       hr[i,,j] <- apply(a,2,sum)
+     }
+
+     a <- x[(72*60-59):(1440*3-4),,j]
+     hr[72,,j] <- apply(a,2,sum)
+   }
+   dimnames(hr) <- dimnames(x)
+   return(hr)
 }
 
-##5倍して1時間の睡眠時間に変換
-d <- d*5
+
 
 ##規定したチャンネルで1時間ずつの睡眠の平均値とSEMを出力
-##xに1時間の睡眠時間dを、yにまとめたいチャンネルのベクトルを入れる
-##1列目に平均値、2列目にSEM
+##チャンネル情報はcsvファイルで別に入れる（1列目にモニター番号、2列目に最初のチャンネル、3列目に最後のチャンネル、4列目にgenotype）
+##出力するのはデータフレームで、1列目に時間、2列目にgenotype、3列目に睡眠の平均値、4列目にSEM
+##入力はxがhrsleepの結果、yがチャンネル情報
 
 meanSEM <- function(x,y){
-  out <- matrix(0, ncol=2, nrow=72)
-  part <- x[,y]
-  out[,1] <- apply(part,1,mean)
-  out[,2] <- apply(part,1,sd)/sqrt(length(part[1,]))
-  df <- data.frame(out)
-  colnames(df) <- c("mean", "SEM")
-  return(df)
+  out <- data.frame(matrix(NA, ncol=4, nrow=72*length(y[,1])))
+  part <- data.frame(matrix(0, ncol=4, nrow=72))
+  part[,1] <- c(1:72)
+
+
+  for(i in 1:length(y[,1])){
+    part[,2] <- y[i,4]
+
+    a <- x[,,y[i,1]]
+    b <- a[,as.numeric(y[i,2]):as.numeric(y[i,3])]
+
+    part[,3] <- apply(b,1,mean)
+    part[,4] <- apply(b,1,sd)/sqrt(length(b[1,]))
+
+    out[(i*72-71):(i*72),] <- part
+  }
+
+  colnames(out) <- c("time", "genotype", "mean", "SEM")
+  return(out)
 }
 
-##まとめて解析するchannelを設定
-channel <- c(1:16)
-mean <- meanSEM(d, channel)
+
 
 ##グラフに出力
 library(ggplot2)
-p <- ggplot(mean, aes(x = c(1:72), y = mean)) + geom_line()
+p <- ggplot(df, aes(x = time, y = mean,group=genotype, colour=genotype) ) + geom_line()
 
 errors <- aes(ymax = mean + SEM, ymin = mean - SEM)
 p <- p + geom_errorbar(errors, width = 0.2) + geom_point(size = 2)
