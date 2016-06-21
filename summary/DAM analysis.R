@@ -6,6 +6,8 @@ barplotall(Marray)
 sleep <- act2sleep(Marray)
 hrs <- hrsleep(sleep)
 
+stat <- DAMstat(Marray, sleep)
+
 summary <- as.matrix(read.table("summary.csv", sep=",", header=T, stringsAsFactors=T))
 out <- meanSEM(hrs, summary)
 
