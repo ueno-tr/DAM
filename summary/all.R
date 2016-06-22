@@ -228,8 +228,9 @@ barplotall <- function(x) {
   stat <- DAMstat(Marray, sleep)
   write.table(stat,"stat.txt", col.names=F)
 
+  library(readxl)
+  summary <- read_excel("summary.xls")
 
-  summary <- as.matrix(read.table("summary.csv", sep=",", header=T, stringsAsFactors=T))
   out <- meanSEM(hrs, summary)
 
   ##グラフに出力
