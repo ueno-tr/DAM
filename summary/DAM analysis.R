@@ -11,6 +11,9 @@ write.table(stat,"stat.txt", col.names=F)
 
 
 summary <- as.matrix(read.table("summary.csv", sep=",", header=T, stringsAsFactors=T))
+##readxlパッケージのread_excel関数で良さそう
+##summary <- read_excel("summary.xls")
+
 out <- meanSEM(hrs, summary)
 
 ##グラフに出力
