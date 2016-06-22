@@ -57,5 +57,18 @@ DAMstat <- function(x,y) {
                             out[9,,j] <- apply(z[,,j], 2, max)
 
   }
-  return(out)
+  dimnames(out) <- list(rownames(out), colnames(out), dimnames(x)[[3]])
+
+  ##配列から行列に変換
+  b <- matrix(NA,ncol=32)
+  row.names(b) <- dimnames(out)[[3]][1]
+  stat <- out[,,1]
+  stat <- rbind(b,stat)
+
+  for(i in 2:length(out[1,1,])) {
+	row.names(b) <- dimnames(out)[[3]][i]
+	stat <- rbind(stat,b,out[,,i])
+  }
+
+  return(stat)
 }

@@ -7,6 +7,8 @@ sleep <- act2sleep(Marray)
 hrs <- hrsleep(sleep)
 
 stat <- DAMstat(Marray, sleep)
+write.table(stat,"stat.txt", col.names=F)
+
 
 summary <- as.matrix(read.table("summary.csv", sep=",", header=T, stringsAsFactors=T))
 out <- meanSEM(hrs, summary)

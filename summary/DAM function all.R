@@ -142,6 +142,10 @@ barplotall <- function(x) {
   ##input: x=importMarrayの出力、y=act2sleepの出力
   ##ともにモニター数が3次元目となる配列
 
+  ##11種類の統計量を求める
+  ##input: x=importMarrayの出力、y=act2sleepの出力
+  ##ともにモニター数が3次元目となる配列
+
   DAMstat <- function(x,y) {
     out <- array(0, dim=c(11, 32, length(x[1,1,])))
     rownames(out) <- c("total acitivy counts", "time active", "percent of time active", "amount of time resting", "waking activity index", "number of activity-rest bout", "mean length of activity period", "mean activity counts during one activity period", "maximum time of one activity period", "mean length of resting period", "maximum time of one resting period")
@@ -197,5 +201,18 @@ barplotall <- function(x) {
                               out[9,,j] <- apply(z[,,j], 2, max)
 
     }
-    return(out)
+    dimnames(out) <- list(rownames(out), colnames(out), dimnames(x)[[3]])
+
+    ##配列から行列に変換
+    b <- matrix(NA,ncol=32)
+    row.names(b) <- dimnames(out)[[3]][1]
+    stat <- out[,,1]
+    stat <- rbind(b,stat)
+
+    for(i in 2:length(out[1,1,])) {
+  	row.names(b) <- dimnames(out)[[3]][i]
+  	stat <- rbind(stat,b,out[,,i])
+    }
+
+    return(stat)
   }
