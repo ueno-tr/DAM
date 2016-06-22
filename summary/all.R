@@ -204,7 +204,7 @@ barplotall <- function(x) {
     dimnames(out) <- list(rownames(out), colnames(out), dimnames(x)[[3]])
 
     ##配列から行列に変換
-    b <- matrix(NA,ncol=32)
+    b <- matrix(rep(paste("C", c(1:32), sep = "")),ncol=32)
     row.names(b) <- dimnames(out)[[3]][1]
     stat <- out[,,1]
     stat <- rbind(b,stat)
