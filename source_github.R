@@ -22,6 +22,6 @@ source_github <- function(u) {
     eval(parse(text = script),envir=.GlobalEnv)
  }
 
-source_github("https://raw.githubusercontent.com/ueno-tr/DAM/master/summary/DAM_function_all.R")
+source_github("https://raw.githubusercontent.com/ueno-tr/DAM/master/summary/DAMfunction.R")
 
 source_github("https://raw.githubusercontent.com/ueno-tr/DAM/master/summary/all.R")
