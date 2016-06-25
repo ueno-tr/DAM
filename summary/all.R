@@ -253,9 +253,9 @@ barplotall <- function(x) {
   out <- meanSEM(hrs, summary)
 
   ##グラフに出力
-  library(ggplot2)
   pdf(paste("summary", ".pdf", sep=""), width=8, height=2)
 
+  library(ggplot2)
   p <- ggplot(out, aes(x = time, y = mean,group=genotype, colour=genotype) ) + geom_line() + ylab("sleep (min/hr)")
 
   errors <- aes(ymax = mean + SEM, ymin = mean - SEM)
