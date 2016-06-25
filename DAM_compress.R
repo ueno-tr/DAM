@@ -1,7 +1,7 @@
 ##DAMの生データから最後10日分のみを切り出す
 ##ファイルが長い時、多数のファイルを同時に処理する時に軽くできる
 ##txtファイルとして出力　DAM file scanを用いる場合はこちら
-
+DAMcompress <- function(){
 files <- list.files() #ディレクトリ内のファイル名をfilesに代入
 
 for (file.name in files) {
@@ -15,6 +15,7 @@ for (file.name in files) {
 
     write.table(c, file.name, col.names=FALSE, row.names=FALSE, sep="\t", quote=FALSE)
     }
+}
 
 
 
