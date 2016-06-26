@@ -3,8 +3,9 @@
 ##グラフ出力は別にする？
 
 ##activityを睡眠に変換
+##最後の4分の判定は、5分前の判定を入れる。要検討。
 act2sleep <- function(x) {
-  sleep <- array(0, dim=c(1440*3-4, 32, length(x[1,1,])))
+  sleep <- array(0, dim=c(1440*3, 32, length(x[1,1,])))
 
   for(j in 1:length(x[1,1,])){
 
@@ -16,6 +17,8 @@ act2sleep <- function(x) {
         sleep[i,h,j] <- sleep[i,h,j] + (b[h] == 0) ##TRUEなら1足す
       }
     }
+
+    sleep[4317:4320,,j] <- sleep[4316,,j]
   }
   dimnames(sleep) <- dimnames(x)
   return(sleep)
