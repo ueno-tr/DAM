@@ -46,7 +46,7 @@ hrsleep <- function(x){
 
 
 ##規定したチャンネルで1時間ずつの睡眠の平均値とSEMを出力
-##チャンネル情報はcsvファイルで別に入れる（1列目にモニター番号、2列目に最初のチャンネル、3列目に最後のチャンネル、4列目にgenotype）
+##チャンネル情報はsummary.xlsファイルで別に入れる（1列目にモニター番号、2列目に最初のチャンネル、3列目に最後のチャンネル、4列目にgenotype, 5列目に除外するチャンネル）
 ##出力するのはデータフレームで、1列目に時間、2列目にgenotype、3列目に睡眠の平均値、4列目にSEM
 ##入力はxがhrsleepの結果、yがチャンネル情報
 
@@ -60,7 +60,12 @@ meanSEM <- function(x,y){
     part[,2] <- y[i,4]
 
     a <- x[,,y[i,1]]
-    b <- a[,as.numeric(y[i,2]):as.numeric(y[i,3])]
+
+    s <- as.numeric(y[i,2]):as.numeric(y[i,3])
+    t <- as.integer(unlist(strsplit(y[i,5],",")))
+    u <- s[-which(s %in% t)]
+
+    b <- a[,u]
 
     part[,3] <- apply(b,1,mean)
     part[,4] <- apply(b,1,sd)/sqrt(length(b[1,]))

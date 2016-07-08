@@ -145,7 +145,12 @@ barplotall <- function(x) {
       part[,2] <- y[i,4]
 
       a <- x[,,y[i,1]]
-      b <- a[,as.numeric(y[i,2]):as.numeric(y[i,3])]
+
+      s <- as.numeric(y[i,2]):as.numeric(y[i,3])
+      t <- as.integer(unlist(strsplit(y[i,5],",")))
+      u <- s[-which(s %in% t)]
+
+      b <- a[,u]
 
       part[,3] <- apply(b,1,mean)
       part[,4] <- apply(b,1,sd)/sqrt(length(b[1,]))
@@ -235,6 +240,29 @@ barplotall <- function(x) {
 
     return(stat)
   }
+
+  ##1hr sleepとstatをエクセルファイルとして出力
+  ##hrsleepの結果をxに、DAMstatの結果をyに入れる
+
+  library(openxlsx)
+
+  outDAM <- function(x,y) {
+    NewWb <- createWorkbook(creator = "Taro Ueno")
+
+    for(j in 1:length(x[1,1,])){
+      name  <- unlist(dimnames(x)[3])[j]
+      addWorksheet(wb = NewWb, sheetName = name, gridLines = TRUE)
+      writeData(wb = NewWb, sheet = name, x = x[,,j], startCol = 1, startRow = 1)
+    }
+
+    addWorksheet(wb = NewWb, sheetName = "stat", gridLines = TRUE)
+    writeData(wb = NewWb, sheet = "stat", x = y, rowNames=TRUE, colNames=FALSE, startCol = 1, startRow = 1)
+
+    openXL(NewWb)
+
+    saveWorkbook(wb = NewWb, "result.xlsx", overwrite = TRUE)
+  }
+
 
   ##関数定義後の実行
   ##DAMfilescanによる3日分のデータと、summary.csvファイルがワーキングディレクトリに必要

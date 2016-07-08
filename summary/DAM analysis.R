@@ -7,7 +7,9 @@ sleep <- act2sleep(Marray)
 hrs <- hrsleep(sleep)
 
 stat <- DAMstat(Marray, sleep)
-write.table(stat,"stat.txt", col.names=F)
+
+library(openxlsx)
+outDAM(hrs, stat)
 
 library(readxl)
 summary <- read_excel("summary.xls")
