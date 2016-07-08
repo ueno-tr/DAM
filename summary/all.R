@@ -150,7 +150,12 @@ barplotall <- function(x) {
       t <- as.integer(unlist(strsplit(y[i,5],",")))
       u <- s[-which(s %in% t)]
 
-      b <- a[,u]
+      if(is.na(t)){
+        b <- a[,s]
+      }
+      else{
+        b <- a[,u]
+      }
 
       part[,3] <- apply(b,1,mean)
       part[,4] <- apply(b,1,sd)/sqrt(length(b[1,]))
@@ -273,7 +278,9 @@ barplotall <- function(x) {
   hrs <- hrsleep(sleep)
 
   stat <- DAMstat(Marray, sleep)
-  write.table(stat,"stat.txt", col.names=F)
+
+  library(openxlsx)
+  outDAM(hrs, stat)
 
   library(readxl)
   summary <- read_excel("summary.xls")
@@ -281,7 +288,6 @@ barplotall <- function(x) {
   out <- meanSEM(hrs, summary)
 
   ##グラフに出力
-
   library(ggplot2)
   p <- ggplot(out, aes(x = time, y = mean,group=genotype, colour=genotype) ) + geom_line() + ylab("sleep (min/hr)")
 
