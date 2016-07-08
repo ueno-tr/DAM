@@ -90,7 +90,7 @@ barplotall <- function(x) {
 
   ##activityを睡眠に変換
   act2sleep <- function(x) {
-    sleep <- array(0, dim=c(1440*3-4, 32, length(x[1,1,])))
+    sleep <- array(0, dim=c(1440*3, 32, length(x[1,1,])))
 
     for(j in 1:length(x[1,1,])){
 
@@ -102,6 +102,8 @@ barplotall <- function(x) {
           sleep[i,h,j] <- sleep[i,h,j] + (b[h] == 0) ##TRUEなら1足す
         }
       }
+
+      sleep[4317:4320,,j] <- sleep[4316,,j]
     }
     dimnames(sleep) <- dimnames(x)
     return(sleep)
@@ -116,13 +118,11 @@ barplotall <- function(x) {
 
     for(j in 1:length(x[1,1,])){
 
-      for(i in 1:71) {
+      for(i in 1:72) {
          a <- x[(i*60-59):(i*60),,j]
          hr[i,,j] <- apply(a,2,sum)
        }
 
-       a <- x[(72*60-59):(1440*3-4),,j]
-       hr[72,,j] <- apply(a,2,sum)
      }
      dimnames(hr) <- dimnames(x)
      return(hr)

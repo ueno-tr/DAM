@@ -26,20 +26,18 @@ act2sleep <- function(x) {
 
 
 
-##1時間の睡眠時間dを設定
+##1時間の睡眠時間を設定
 ##act2sleepの結果を入れる
 hrsleep <- function(x){
   hr <- array(0, dim=c(72, 32, length(x[1,1,])))
 
   for(j in 1:length(x[1,1,])){
 
-    for(i in 1:71) {
+    for(i in 1:72) {
        a <- x[(i*60-59):(i*60),,j]
        hr[i,,j] <- apply(a,2,sum)
      }
 
-     a <- x[(72*60-59):(1440*3-4),,j]
-     hr[72,,j] <- apply(a,2,sum)
    }
    dimnames(hr) <- dimnames(x)
    return(hr)
