@@ -270,7 +270,7 @@ barplotall <- function(x) {
   }
 
 ##解析の前半部分をまとめた関数DAM1
-DAM1 <- function() {
+DAMsleep1 <- function() {
 Marray <- importMarray()
 barplotall(Marray)
 sleep <- act2sleep(Marray)
@@ -286,7 +286,7 @@ return(hrs)
 
 ##解析の後半部分をまとめた関数DAM2
 ##DAM1の結果を引数に入れる
-DAM2 <- function(hrs) {
+DAMsleep2 <- function(hrs) {
   library(readxl)
   summary <- read_excel("summary.xls")
 
