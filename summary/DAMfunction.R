@@ -268,3 +268,35 @@ barplotall <- function(x) {
 
     saveWorkbook(wb = NewWb, "result.xlsx", overwrite = TRUE)
   }
+
+##解析の前半部分をまとめた関数DAM1
+DAM1 <- function() {
+Marray <- importMarray()
+barplotall(Marray)
+sleep <- act2sleep(Marray)
+hrs <- hrsleep(sleep)
+
+stat <- DAMstat(Marray, sleep)
+
+library(openxlsx)
+outDAM(hrs, stat)
+
+return(hrs)
+  }
+
+##解析の後半部分をまとめた関数DAM2
+##DAM1の結果を引数に入れる
+DAM2 <- function(hrs) {
+  library(readxl)
+  summary <- read_excel("summary.xls")
+
+  out <- meanSEM(hrs, summary)
+
+  ##グラフに出力
+  library(ggplot2)
+  p <- ggplot(out, aes(x = time, y = mean,group=genotype, colour=genotype) ) + geom_line() + ylab("sleep (min/hr)")
+
+  errors <- aes(ymax = mean + SEM, ymin = mean - SEM)
+  p <- p + geom_errorbar(errors, width = 0.2) + geom_point(size = 2)
+  p
+}

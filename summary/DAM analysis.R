@@ -1,5 +1,5 @@
 ##関数定義後の実行
-##DAMfilescanによる3日分のデータと、summary.csvファイルがワーキングディレクトリに必要
+##DAMfilescanによる3日分のデータと、summary.xlsファイルがワーキングディレクトリに必要
 
 Marray <- importMarray()
 barplotall(Marray)
@@ -10,6 +10,8 @@ stat <- DAMstat(Marray, sleep)
 
 library(openxlsx)
 outDAM(hrs, stat)
+
+##ここまでまず行い、生データを確認してsummaryを修正する
 
 library(readxl)
 summary <- read_excel("summary.xls")
